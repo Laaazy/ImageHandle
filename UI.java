@@ -297,7 +297,7 @@ public class UI extends JFrame {
 					};
 					his.slider.addChangeListener(his.listener);
 					
-					his.histLabel.setIcon( new ImageIcon(Histogram.drawHist(hist,sum)) );
+					his.histLabel.setIcon( new ImageIcon(BitMap.drawHist(hist,sum)) );
 				}
 			}
 		});
