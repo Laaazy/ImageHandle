@@ -2,6 +2,7 @@ package ImageHandle;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.io.File;
@@ -154,4 +155,138 @@ public class BitMap {
 		}
 		return hist;
 	}
+	
+	//画灰度直方图
+	public static BufferedImage drawHist(int []hist,int pixSum) {
+		int size = 300;
+		BufferedImage pic = new BufferedImage(size,size, BufferedImage.TYPE_4BYTE_ABGR);
+		Graphics2D g2d = pic.createGraphics();  
+	    g2d.setPaint(Color.BLACK);  
+	    g2d.fillRect(0, 0, size, size);  
+	    g2d.setPaint(Color.WHITE);  
+        g2d.drawLine(30, 280, 290, 280); //横轴，长度为250
+        g2d.drawLine(290, 280, 285, 277);
+        g2d.drawLine(290, 280, 285, 283);
+        g2d.drawString("灰度级  255", 220, 295);//横轴最右
+        g2d.drawString("0", 27, 280+13);//原点
+	    g2d.drawLine(30, 280, 30, 30);//纵轴，长度为250 	
+	    g2d.drawLine(30, 30, 27, 35);
+	    g2d.drawLine(30, 30, 33, 35);
+	    g2d.drawString("出现频率", 27, 28);//纵轴最高点
+	    //g2d.drawString("出现频率", 27, 15);//纵轴最高点
+	           
+	    g2d.setPaint(Color.GREEN);  
+	    int max = 0;//记录最大灰度级
+	    for ( int i = 0; i<256; i++ )
+        {
+        	if( hist[i] > max ) max = hist[i];
+        }
+          
+        int offset = 1;  
+        for(int i=0; i<hist.length; i++) {  
+        	int lineLength = (int)(250*hist[i]/(double)max);//灰度直方图中的线长度  
+            g2d.drawLine(30 + offset + i, 280, 30 + offset + i, 280-lineLength);  
+        } 
+        //g2d.drawString("最大灰度级:"+String.valueOf(max), 130, 295); 
+           
+      //  g2d.setPaint(Color.RED);  
+       // g2d.drawString("", 100, 270); 
+        return pic;
+	}
+	
+	//线性点处理函数1，整体变亮50个灰度级
+	public static BufferedImage dot_change_1(BufferedImage image) {
+		int iw=image.getWidth();
+		int ih=image.getHeight();
+		BufferedImage result=new BufferedImage(iw, ih, BufferedImage.TYPE_BYTE_GRAY);
+		ColorModel cm=ColorModel.getRGBdefault();
+		for(int i=0;i<ih;i++) {
+			for(int j=0;j<iw;j++) {
+				int rgb=image.getRGB(i, j);
+				int red=cm.getRed(rgb)+50;
+				if(red>255)
+					red=255;
+				result.setRGB(i, j, new Color(red,red,red).getRGB());
+			}
+		}
+		return result;
+	} 
+	
+	//线性点处理函数2，拉伸2倍
+	public static BufferedImage dot_change_2(BufferedImage image) {
+		int iw=image.getWidth();
+		int ih=image.getHeight();
+		BufferedImage result=new BufferedImage(iw, ih, BufferedImage.TYPE_BYTE_GRAY);
+		ColorModel cm=ColorModel.getRGBdefault();
+		for(int i=0;i<ih;i++) {
+			for(int j=0;j<iw;j++) {
+				int rgb=image.getRGB(i, j);
+				int red=cm.getRed(rgb)*2;
+				if(red>255)
+					red=255;
+				result.setRGB(i, j, new Color(red,red,red).getRGB());
+			}
+		}
+		return result;
+	} 
+	
+	//非线性点处理函数3
+	public static BufferedImage dot_change_3(BufferedImage image) {
+		int iw=image.getWidth();
+		int ih=image.getHeight();
+		BufferedImage result=new BufferedImage(iw, ih, BufferedImage.TYPE_BYTE_GRAY);
+		ColorModel cm=ColorModel.getRGBdefault();
+		for(int i=0;i<ih;i++) {
+			for(int j=0;j<iw;j++) {
+				int rgb=image.getRGB(i, j);
+				int red=(int)Math.log(cm.getRed(rgb));
+				if(red>255)
+					red=255;
+				if(red<0)
+					red=0;
+				result.setRGB(i, j, new Color(red,red,red).getRGB());
+			}
+		}
+		return result;
+	}	
+		
+	//非线性点处理函数4
+	public static BufferedImage dot_change_4(BufferedImage image) {
+		int iw=image.getWidth();
+		int ih=image.getHeight();
+		BufferedImage result=new BufferedImage(iw, ih, BufferedImage.TYPE_BYTE_GRAY);
+		ColorModel cm=ColorModel.getRGBdefault();
+		for(int i=0;i<ih;i++) {
+			for(int j=0;j<iw;j++) {
+				int rgb=image.getRGB(i, j);
+				int red=(int)Math.sin(cm.getRed(rgb));
+				if(red>255)
+					red=255;
+				if(red<0)
+					red=0;
+				result.setRGB(i, j, new Color(red,red,red).getRGB());
+			}
+		}
+		return result;
+	}
+	
+	//直方图均衡化函数
+		public static BufferedImage histEqualization(BufferedImage image,int[]hist) {
+			int iw=image.getWidth();
+			int ih=image.getHeight();
+			BufferedImage result=new BufferedImage(iw, ih, BufferedImage.TYPE_BYTE_GRAY);
+			ColorModel cm=ColorModel.getRGBdefault();
+			for(int i=0;i<ih;i++) {
+				for(int j=0;j<iw;j++) {
+					int rgb=image.getRGB(i, j);
+					int red=(int)Math.sin(cm.getRed(rgb));
+					if(red>255)
+						red=255;
+					if(red<0)
+						red=0;
+					result.setRGB(i, j, new Color(red,red,red).getRGB());
+				}
+			}
+			return result;
+		}			
 }
