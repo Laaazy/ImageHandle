@@ -9,12 +9,14 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+
 
 
 
 public class BitMap {
 	
-	public static int hist[]=new int[256];
+	//public static int hist[]=new int[256];
 	
 	//将24位彩色位图转换为灰度图
 	public static BufferedImage toGray(BufferedImage image) throws IOException {
@@ -145,6 +147,7 @@ public class BitMap {
 		int iw=image.getWidth();
 		int ih=image.getHeight();
 		int pix[]=new int[iw*ih];
+		int hist[]=new int[256];
 		for(int i=0;i<hist.length;i++)
 			hist[i]=0;
 		int temp;
@@ -235,13 +238,15 @@ public class BitMap {
 				int red=cm.getRed(rgb)+50;
 				if(red>255)
 					red=255;
+				if(red<0)
+					red=0;
 				result.setRGB(j, i, new Color(red,red,red).getRGB());
 			}
 		}
 		return result;
 	} 
 	
-	//线性点处理函数2，拉伸2倍
+	//线性点处理函数2，实现亮暗部分对调
 	public static BufferedImage dot_change_2(BufferedImage image) {
 		int iw=image.getWidth();
 		int ih=image.getHeight();
@@ -250,9 +255,11 @@ public class BitMap {
 		for(int i=0;i<ih;i++) {
 			for(int j=0;j<iw;j++) {
 				int rgb=image.getRGB(j, i);
-				int red=cm.getRed(rgb)*2;
+				int red=cm.getRed(rgb)*-1+255;
 				if(red>255)
 					red=255;
+				if(red<0)
+					red=0;
 				result.setRGB(j, i, new Color(red,red,red).getRGB());
 			}
 		}
@@ -268,7 +275,8 @@ public class BitMap {
 		for(int i=0;i<ih;i++) {
 			for(int j=0;j<iw;j++) {
 				int rgb=image.getRGB(j, i);
-				int red=(int)Math.log(cm.getRed(rgb));
+				int red=cm.getRed(rgb);
+				red=(int)(red+0.8*red*(255-red)/255);
 				if(red>255)
 					red=255;
 				if(red<0)
@@ -288,7 +296,8 @@ public class BitMap {
 		for(int i=0;i<ih;i++) {
 			for(int j=0;j<iw;j++) {
 				int rgb=image.getRGB(j, i);
-				int red=(int)Math.sin(cm.getRed(rgb));
+				int red=cm.getRed(rgb);
+				red=(int)(255/(double)2*(1+1/Math.sin(Math.PI/2)*Math.sin(Math.PI*(red/(double)255-0.5))));
 				if(red>255)
 					red=255;
 				if(red<0)
@@ -300,23 +309,25 @@ public class BitMap {
 	}
 	
 	//直方图均衡化函数
-		public static BufferedImage histEqualization(BufferedImage image,int[]hist) {
+		public static void histEqualization(BufferedImage image) {
+			int hist[]=new int[256];
+			hist=BitMap.getHist(image);
+			//显示处理后图像的直方图的标准流程
 			int iw=image.getWidth();
 			int ih=image.getHeight();
-			BufferedImage result=new BufferedImage(iw, ih, BufferedImage.TYPE_BYTE_GRAY);
-			ColorModel cm=ColorModel.getRGBdefault();
-			for(int i=0;i<ih;i++) {
-				for(int j=0;j<iw;j++) {
-					int rgb=image.getRGB(j, i);
-					int red=(int)Math.sin(cm.getRed(rgb));
-					if(red>255)
-						red=255;
-					if(red<0)
-						red=0;
-					result.setRGB(j, i, new Color(red,red,red).getRGB());
-				}
-			}
-			return result;
+			int sum=iw*ih;
+			//BitMap.histLabel(sum, hist);
+			for(int i=1;i<hist.length;i++)
+				hist[i]+=hist[i-1];
+			for(int i=0;i<hist.length;i++)//hist均衡化
+				hist[i]=hist[i]/hist[255]*255;
+			//for(int i=0;i<hist.length;i++)
+				//System.out.print(hist[i]+" ");
+			BitMap.histLabel(sum, hist);
+			UI.histogram2.setIcon( new ImageIcon(BitMap.drawHist(hist,sum)) );
+			if(UI.mid2.getText().equals("中值灰度：-1"))
+				UI.mid2.setText("中值灰度："+String.valueOf(0));
+			UI.picture2.setIcon(new ImageIcon(image.getScaledInstance(UI.WIDTH, UI.HEIGHT, java.awt.Image.SCALE_DEFAULT)));
 		}	
 		
 	
