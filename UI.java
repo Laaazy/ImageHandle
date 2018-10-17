@@ -54,6 +54,7 @@ public class UI extends JFrame {
 	public static JLabel mid2=null;
 	public static JLabel deviation2=null;
 	public static JLabel pixSum2 =null;
+	public static JLabel picture2=null;
 	
 	static int sValue,qValue;
 	private JPanel contentPane;
@@ -113,7 +114,7 @@ public class UI extends JFrame {
 		quantization.setBounds(298, 70, 110, 25);
 		contentPane.add(quantization);
 		
-		JLabel picture2 = new JLabel("\u53D8\u6362\u540E\u7684\u56FE\u50CF\u5C06\u5728\u8FD9\u91CC\u663E\u793A");
+		picture2 = new JLabel("\u53D8\u6362\u540E\u7684\u56FE\u50CF\u5C06\u5728\u8FD9\u91CC\u663E\u793A");
 		picture2.setFont(new Font("黑体", Font.PLAIN, 14));
 		picture2.setHorizontalAlignment(SwingConstants.CENTER);
 		picture2.setBounds(890, 110, 320, 320);
@@ -394,6 +395,97 @@ public class UI extends JFrame {
 		quantizationSlider.setSnapToTicks(true);
 		quantizationSlider.addChangeListener(qListener);
 		contentPane.add(quantizationSlider);
+		
+		JButton dot_change_1 = new JButton("\u7EBF\u6027\u70B9\u5904\u74061");
+		dot_change_1.setFont(new Font("黑体", Font.PLAIN, 12));
+		dot_change_1.setBounds(580, 10, 100, 25);
+		dot_change_1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				temp=BitMap.dot_change_1(image);
+				//显示处理后图像的直方图的标准流程
+				int iw=temp.getWidth();
+				int ih=temp.getHeight();
+				int sum=iw*ih;
+				int hist[]=new int[256];
+				hist=BitMap.getHist(temp);
+				BitMap.histLabel(sum, hist);
+				histogram2.setIcon( new ImageIcon(BitMap.drawHist(hist,sum)) );
+				picture2.setIcon(new ImageIcon(temp.getScaledInstance(WIDTH, HEIGHT, java.awt.Image.SCALE_DEFAULT)));
+			}
+		});
+		contentPane.add(dot_change_1);
+		
+		JButton dot_change_2 = new JButton("\u7EBF\u6027\u70B9\u5904\u74062");
+		dot_change_2.setFont(new Font("黑体", Font.PLAIN, 12));
+		dot_change_2.setBounds(683, 10, 100, 25);
+		dot_change_2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				temp=BitMap.dot_change_2(image);
+				//显示处理后图像的直方图的标准流程
+				int iw=temp.getWidth();
+				int ih=temp.getHeight();
+				int sum=iw*ih;
+				int hist[]=new int[256];
+				hist=BitMap.getHist(temp);
+				BitMap.histLabel(sum, hist);
+				histogram2.setIcon( new ImageIcon(BitMap.drawHist(hist,sum)) );
+				picture2.setIcon(new ImageIcon(temp.getScaledInstance(WIDTH, HEIGHT, java.awt.Image.SCALE_DEFAULT)));
+			}
+		});
+		contentPane.add(dot_change_2);
+		
+		JButton dot_change_3 = new JButton("\u975E\u7EBF\u6027\u70B9\u5904\u74061");
+		dot_change_3.setFont(new Font("黑体", Font.PLAIN, 9));
+		dot_change_3.setBounds(580, 38, 100, 25);
+		dot_change_3.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				temp=BitMap.dot_change_3(image);
+				//显示处理后图像的直方图的标准流程
+				int iw=temp.getWidth();
+				int ih=temp.getHeight();
+				int sum=iw*ih;
+				int hist[]=new int[256];
+				hist=BitMap.getHist(temp);
+				BitMap.histLabel(sum, hist);
+				histogram2.setIcon( new ImageIcon(BitMap.drawHist(hist,sum)) );
+				picture2.setIcon(new ImageIcon(temp.getScaledInstance(WIDTH, HEIGHT, java.awt.Image.SCALE_DEFAULT)));
+			}
+		});
+		contentPane.add(dot_change_3);
+		
+		JButton dot_change_4 = new JButton("\u975E\u7EBF\u6027\u70B9\u5904\u74062");
+		dot_change_4.setFont(new Font("黑体", Font.PLAIN, 9));
+		dot_change_4.setBounds(683, 37, 100, 25);
+		dot_change_4.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				temp=BitMap.dot_change_4(image);
+				//显示处理后图像的直方图的标准流程
+				int iw=temp.getWidth();
+				int ih=temp.getHeight();
+				int sum=iw*ih;
+				int hist[]=new int[256];
+				hist=BitMap.getHist(temp);
+				BitMap.histLabel(sum, hist);
+				histogram2.setIcon( new ImageIcon(BitMap.drawHist(hist,sum)) );
+				picture2.setIcon(new ImageIcon(temp.getScaledInstance(WIDTH, HEIGHT, java.awt.Image.SCALE_DEFAULT)));
+			}
+		});
+		contentPane.add(dot_change_4);
+		
+		JButton GST = new JButton("\u539F\u56FE\u76F4\u65B9\u56FE\u5747\u8861");
+		GST.setFont(new Font("黑体", Font.PLAIN, 11));
+		GST.setBounds(301, 10, 115, 25);
+		GST.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				BitMap.histEqualization(image);
+			}
+		});
+		contentPane.add(GST);
 		
 
 	}
