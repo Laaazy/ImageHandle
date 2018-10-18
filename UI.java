@@ -214,6 +214,7 @@ public class UI extends JFrame {
 					mid2.setText("中值灰度:"+String.valueOf(255));
 				histogram2.setIcon( new ImageIcon(BitMap.drawHist(hist,sum)) );
 				picture2.setIcon(new ImageIcon(binary.getScaledInstance(WIDTH, HEIGHT, java.awt.Image.SCALE_DEFAULT)));
+				picture2.setText(null);
 			}	
 		};		
 		
@@ -244,6 +245,7 @@ public class UI extends JFrame {
 					image=BitMap.toGray(image);//转化为灰度图,这里temp和image先后处理的顺讯是有影响的，即灰度图作用之后会发生改变
 					System.out.println("转化为灰度图成功");
 					picture1.setIcon(new ImageIcon(image.getScaledInstance(WIDTH, HEIGHT, java.awt.Image.SCALE_DEFAULT)));
+					picture1.setText(null);
 				
 					int iw=image.getWidth();
 					int ih=image.getHeight();
@@ -348,6 +350,7 @@ public class UI extends JFrame {
 						BitMap.histLabel(sum, hist);
 						histogram2.setIcon( new ImageIcon(BitMap.drawHist(hist,sum)) );
 						picture2.setIcon(new ImageIcon(temp.getScaledInstance(WIDTH, HEIGHT, java.awt.Image.SCALE_DEFAULT)));
+						picture2.setText(null);
 					}
 				};
 				
@@ -372,6 +375,7 @@ public class UI extends JFrame {
 						BitMap.histLabel(sum, hist);
 						histogram2.setIcon( new ImageIcon(BitMap.drawHist(hist,sum)) );
 						picture2.setIcon(new ImageIcon(temp.getScaledInstance(WIDTH, HEIGHT, java.awt.Image.SCALE_DEFAULT)));
+						picture2.setText(null);
 					}
 				};
 		
@@ -396,6 +400,7 @@ public class UI extends JFrame {
 		quantizationSlider.addChangeListener(qListener);
 		contentPane.add(quantizationSlider);
 		
+		//线性点处理1
 		JButton dot_change_1 = new JButton("\u7EBF\u6027\u70B9\u5904\u74061");
 		dot_change_1.setFont(new Font("黑体", Font.PLAIN, 12));
 		dot_change_1.setBounds(580, 10, 100, 25);
@@ -412,10 +417,12 @@ public class UI extends JFrame {
 				BitMap.histLabel(sum, hist);
 				histogram2.setIcon( new ImageIcon(BitMap.drawHist(hist,sum)) );
 				picture2.setIcon(new ImageIcon(temp.getScaledInstance(WIDTH, HEIGHT, java.awt.Image.SCALE_DEFAULT)));
+				picture2.setText(null);
 			}
 		});
 		contentPane.add(dot_change_1);
 		
+		//线性点处理2
 		JButton dot_change_2 = new JButton("\u7EBF\u6027\u70B9\u5904\u74062");
 		dot_change_2.setFont(new Font("黑体", Font.PLAIN, 12));
 		dot_change_2.setBounds(683, 10, 100, 25);
@@ -432,10 +439,12 @@ public class UI extends JFrame {
 				BitMap.histLabel(sum, hist);
 				histogram2.setIcon( new ImageIcon(BitMap.drawHist(hist,sum)) );
 				picture2.setIcon(new ImageIcon(temp.getScaledInstance(WIDTH, HEIGHT, java.awt.Image.SCALE_DEFAULT)));
+				picture2.setText(null);
 			}
 		});
 		contentPane.add(dot_change_2);
 		
+		//非线性点处理1
 		JButton dot_change_3 = new JButton("\u975E\u7EBF\u6027\u70B9\u5904\u74061");
 		dot_change_3.setFont(new Font("黑体", Font.PLAIN, 9));
 		dot_change_3.setBounds(580, 38, 100, 25);
@@ -452,10 +461,12 @@ public class UI extends JFrame {
 				BitMap.histLabel(sum, hist);
 				histogram2.setIcon( new ImageIcon(BitMap.drawHist(hist,sum)) );
 				picture2.setIcon(new ImageIcon(temp.getScaledInstance(WIDTH, HEIGHT, java.awt.Image.SCALE_DEFAULT)));
+				picture2.setText(null);
 			}
 		});
 		contentPane.add(dot_change_3);
 		
+		//非线性点处理2
 		JButton dot_change_4 = new JButton("\u975E\u7EBF\u6027\u70B9\u5904\u74062");
 		dot_change_4.setFont(new Font("黑体", Font.PLAIN, 9));
 		dot_change_4.setBounds(683, 37, 100, 25);
@@ -472,10 +483,12 @@ public class UI extends JFrame {
 				BitMap.histLabel(sum, hist);
 				histogram2.setIcon( new ImageIcon(BitMap.drawHist(hist,sum)) );
 				picture2.setIcon(new ImageIcon(temp.getScaledInstance(WIDTH, HEIGHT, java.awt.Image.SCALE_DEFAULT)));
+				picture2.setText(null);
 			}
 		});
 		contentPane.add(dot_change_4);
 		
+		//直方图均衡化
 		JButton GST = new JButton("\u539F\u56FE\u76F4\u65B9\u56FE\u5747\u8861");
 		GST.setFont(new Font("黑体", Font.PLAIN, 11));
 		GST.setBounds(301, 10, 115, 25);
@@ -487,18 +500,14 @@ public class UI extends JFrame {
 		});
 		contentPane.add(GST);
 		
+		//图像缩放
 		JButton btnTest = new JButton("图像缩放");
-		btnTest.setBounds(785, 11, 93, 23);
+		btnTest.setFont(new Font("黑体", Font.PLAIN, 12));
+		btnTest.setBounds(786, 10, 93, 25);
 		btnTest.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-			temp=BitMap.suofang(image,0,800,800);
-			picture2.setIcon(new ImageIcon(temp));
-			int hist[]=new int[256];
-			hist=BitMap.getHist(temp);
-			int sum=temp.getWidth()*temp.getHeight();
-			BitMap.histLabel(sum, hist);
-			histogram2.setIcon( new ImageIcon(BitMap.drawHist(hist,sum)) );
+			new Zooming();
 			}
 		});
 		contentPane.add(btnTest);
