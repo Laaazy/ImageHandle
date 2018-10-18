@@ -387,8 +387,6 @@ public class BitMap {
 		//System.err.println(iw+" "+ih);
 		float fx =iw/(float)newIw;//x方向的缩放比例
 		float fy=ih/(float)newIh;//y方向的缩放比例
-		ColorModel cModel=ColorModel.getRGBdefault();
-		int k,l;//k表示原图中最近点的横坐标，l表示原图中最近点的纵坐标
 		BufferedImage result=new BufferedImage(newIw,newIh, BufferedImage.TYPE_BYTE_GRAY);//缩放后的图像
 		for(int i=0;i<newIh;i++)
 			for(int j=0;j<newIw;j++) {
@@ -400,4 +398,51 @@ public class BitMap {
 		return result;
 	}
 	
+	//图像平移
+	public static BufferedImage translation(BufferedImage image,String direction,int distance) {//直接调用最近邻插值，注意平移距离不能超过原图尺寸
+		int iw=image.getWidth();
+		int ih=image.getHeight();
+		BufferedImage result=new BufferedImage(iw,ih, BufferedImage.TYPE_BYTE_GRAY);//缩放后的图像
+		if(direction.equals("U")&&distance<ih){//向上平移
+			for(int i=0;i<ih;i++)
+				for(int j=0;j<iw;j++) {
+					if(i+distance>ih-1) {
+						result.setRGB(j, i, nearest(image, j, ih-1));
+					}
+					else
+						result.setRGB(j,i, nearest(image, j, i+distance));
+				}
+		}
+		else if(direction.equals("D")&&distance<ih) {//向下平移
+			for(int i=0;i<ih;i++)
+				for(int j=0;j<iw;j++) {
+					if(i-distance<0) {
+						result.setRGB(j, i, nearest(image, j, 0));
+					}
+					else
+						result.setRGB(j,i, nearest(image, j, i-distance));
+				}
+		}
+		else if(direction.equals("L")&&distance<iw) {//向左平移
+			for(int i=0;i<ih;i++)
+				for(int j=0;j<iw;j++) {
+					if(j+distance>iw-1) {
+						result.setRGB(j, i, nearest(image, iw-1, i));
+					}
+					else
+						result.setRGB(j,i, nearest(image, j+distance, i));
+				}
+		}
+		else if(direction.equals("R")&&distance<iw) {//向右平移
+			for(int i=0;i<ih;i++)
+				for(int j=0;j<iw;j++) {
+					if(j-distance<0) {
+						result.setRGB(j, i, nearest(image, 0, i));
+					}
+					else
+						result.setRGB(j,i, nearest(image, j-distance, i));
+				}
+		}
+		return result;
+	}
 }
