@@ -27,7 +27,8 @@ public class Zooming {
 	 */
 	public Zooming() {
 		JFrame childFrame=new JFrame();
-		childFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		childFrame.setTitle("图像缩放");
+		childFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		childFrame.setBounds(400, 140, 450, 250);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -65,15 +66,23 @@ public class Zooming {
 			public void actionPerformed(ActionEvent arg0) {
 				int newIw=Integer.parseInt(iw.getText());//目标图像宽度
 				int newIh=Integer.parseInt(ih.getText());//目标图像高度
-				UI.temp=BitMap.zooming(UI.image,0,newIw,newIh);
-				UI.picture2.setIcon(new ImageIcon(UI.temp));
-				UI.picture2.setText(null);
-				int hist[]=new int[256];
-				hist=BitMap.getHist(UI.temp);
-				int sum=UI.temp.getWidth()*UI.temp.getHeight();
-				BitMap.histLabel(sum, hist);
-				UI.histogram2.setIcon( new ImageIcon(BitMap.drawHist(hist,sum)));
-				childFrame.dispose();
+				if(newIw<=0||newIh<=0) {
+					if(newIw<=0)
+						iw.setText("错误的大小");
+					if(newIh<=0)
+						ih.setText("错误的大小");
+				}
+				else{
+					UI.temp=BitMap.zooming(UI.image,0,newIw,newIh);
+					UI.picture2.setIcon(new ImageIcon(UI.temp));
+					UI.picture2.setText(null);
+					int hist[]=new int[256];
+					hist=BitMap.getHist(UI.temp);
+					int sum=UI.temp.getWidth()*UI.temp.getHeight();
+					BitMap.histLabel(sum, hist);
+					UI.histogram2.setIcon( new ImageIcon(BitMap.drawHist(hist,sum)));
+					childFrame.dispose();
+				}
 			}
 		});
 		contentPane.add(nearest);
@@ -86,15 +95,24 @@ public class Zooming {
 			public void actionPerformed(ActionEvent arg0) {
 				int newIw=Integer.parseInt(iw.getText());//目标图像宽度
 				int newIh=Integer.parseInt(ih.getText());//目标图像高度
-				UI.temp=BitMap.zooming(UI.image,1,newIw,newIh);
-				UI.picture2.setIcon(new ImageIcon(UI.temp));
-				UI.picture2.setText(null);
-				int hist[]=new int[256];
-				hist=BitMap.getHist(UI.temp);
-				int sum=UI.temp.getWidth()*UI.temp.getHeight();
-				BitMap.histLabel(sum, hist);
-				UI.histogram2.setIcon( new ImageIcon(BitMap.drawHist(hist,sum)));
-				childFrame.dispose();
+				if(newIw<=0||newIh<=0) {
+					if(newIw<=0)
+						iw.setText("错误的大小");
+					if(newIh<=0)
+						ih.setText("错误的大小");
+				}
+				else {
+					UI.temp=BitMap.zooming(UI.image,1,newIw,newIh);
+					UI.picture2.setIcon(new ImageIcon(UI.temp));
+					UI.picture2.setText(null);
+					int hist[]=new int[256];
+					hist=BitMap.getHist(UI.temp);
+					int sum=UI.temp.getWidth()*UI.temp.getHeight();
+					BitMap.histLabel(sum, hist);
+					UI.histogram2.setIcon( new ImageIcon(BitMap.drawHist(hist,sum)));
+					childFrame.dispose();	
+				}
+				
 			}
 		});
 		contentPane.add(biLinear);
