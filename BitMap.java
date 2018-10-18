@@ -329,6 +329,73 @@ public class BitMap {
 				UI.mid2.setText("中值灰度："+String.valueOf(0));
 			UI.picture2.setIcon(new ImageIcon(image.getScaledInstance(UI.WIDTH, UI.HEIGHT, java.awt.Image.SCALE_DEFAULT)));
 		}	
-		
 	
+	//最近邻插值,根据映射后点在原图中的坐标，返回新图应置的RGB值
+		public static int nearest(BufferedImage image,float x,float y) {
+			ColorModel cModel=ColorModel.getRGBdefault();
+			int iw=image.getWidth();
+			int ih=image.getHeight();
+			int k,l;
+			k=Math.round(x);//四舍五入
+			if(k>iw-1)
+				k=iw-1;
+			l=Math.round(y);
+			if(l>ih-1)
+				l=ih-1;
+			int red=cModel.getRed(image.getRGB(k, l));
+			return (new Color(red,red,red).getRGB());
+		}
+		
+	//双线性插值,根据映射后点在原图中的坐标，返回新图应置的RGB值
+	//总体来说双线性效果优于最近邻
+		public static int biLinear(BufferedImage image,float x,float y) {
+			ColorModel cModel=ColorModel.getRGBdefault();
+			int iw=image.getWidth();
+			int ih=image.getHeight();
+			if(x>iw-1)//映射回来的坐标有可能越界
+				x=iw-1;
+			if(y>ih-1)
+				y=ih-1;
+			/*
+			 * 0.0----1.0
+			 *  |  x.y |
+			 * 0.1----1.1
+			*/
+			int f_0_0=cModel.getRed(image.getRGB((int)Math.floor(x), (int)Math.floor(y)));
+			int f_1_0=cModel.getRed(image.getRGB((int)Math.ceil(x), (int)Math.floor(y)));
+			int f_0_1=cModel.getRed(image.getRGB((int)Math.floor(x), (int)Math.ceil(y)));
+			int f_1_1=cModel.getRed(image.getRGB((int)Math.ceil(x), (int)Math.ceil(y)));
+			//if(f_0_0>250||f_1_0>250||f_0_1>250||f_1_1>250)
+				//System.err.println(f_0_0+" "+" "+f_1_0+" "+f_0_1+" "+f_1_1);
+			float delta_x=x-(float)Math.floor(x);
+			float delta_y=y-(float)Math.floor(y);
+			int red=(int)((f_1_0-f_0_0)*delta_x+f_0_0+(f_0_1-f_0_0)*delta_y);
+			if(red>255)
+				red=255;
+			if(red<0)
+				red=0;
+			//if(red>250)
+				//System.err.println(f_0_0+" "+f_1_0+" "+f_0_1+" "+f_1_1+" "+delta_x+" "+delta_y+" "+red);
+			return new Color(red,red,red).getRGB();
+		}		
+		
+	//图像缩放
+	public static BufferedImage suofang(BufferedImage image,int way,int newIw,int newIh) {//way==0使用最近邻,way==1使用双线性
+		int iw=image.getWidth();
+		int ih=image.getHeight();
+		//System.err.println(iw+" "+ih);
+		float fx =iw/(float)newIw;//x方向的缩放比例
+		float fy=ih/(float)newIh;//y方向的缩放比例
+		ColorModel cModel=ColorModel.getRGBdefault();
+		int k,l;//k表示原图中最近点的横坐标，l表示原图中最近点的纵坐标
+		BufferedImage result=new BufferedImage(newIw,newIh, BufferedImage.TYPE_BYTE_GRAY);//缩放后的图像
+		for(int i=0;i<newIh;i++)
+			for(int j=0;j<newIw;j++) {
+				if(way==0)
+					result.setRGB(j,i,nearest(image, j*fx, i*fy));
+				if(way==1)
+					result.setRGB(j, i, biLinear(image, j*fx, i*fy));
+			}
+		return result;
+	}
 }
