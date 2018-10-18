@@ -328,6 +328,7 @@ public class BitMap {
 			if(UI.mid2.getText().equals("中值灰度：-1"))
 				UI.mid2.setText("中值灰度："+String.valueOf(0));
 			UI.picture2.setIcon(new ImageIcon(image.getScaledInstance(UI.WIDTH, UI.HEIGHT, java.awt.Image.SCALE_DEFAULT)));
+			UI.picture2.setText(null);
 		}	
 	
 	//最近邻插值,根据映射后点在原图中的坐标，返回新图应置的RGB值
@@ -380,7 +381,7 @@ public class BitMap {
 		}		
 		
 	//图像缩放
-	public static BufferedImage suofang(BufferedImage image,int way,int newIw,int newIh) {//way==0使用最近邻,way==1使用双线性
+	public static BufferedImage zooming(BufferedImage image,int way,int newIw,int newIh) {//way==0使用最近邻,way==1使用双线性
 		int iw=image.getWidth();
 		int ih=image.getHeight();
 		//System.err.println(iw+" "+ih);
@@ -398,4 +399,5 @@ public class BitMap {
 			}
 		return result;
 	}
+	
 }
