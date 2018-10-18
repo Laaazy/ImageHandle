@@ -67,6 +67,7 @@ public class UI extends JFrame {
 			public void run() {
 				try {
 					UI frame = new UI();
+					frame.setTitle("主窗口");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -311,6 +312,7 @@ public class UI extends JFrame {
 		});
 		contentPane.add(save);
 		
+		//分割位平面
 		JButton bitPlane = new JButton("\u5206\u5272\u4F4D\u9762\u56FE");
 		bitPlane.setFont(new Font("黑体", Font.PLAIN, 13));
 		bitPlane.setBounds(196, 10, 102, 25);
@@ -501,16 +503,34 @@ public class UI extends JFrame {
 		contentPane.add(GST);
 		
 		//图像缩放
-		JButton btnTest = new JButton("图像缩放");
-		btnTest.setFont(new Font("黑体", Font.PLAIN, 12));
-		btnTest.setBounds(786, 10, 93, 25);
-		btnTest.addActionListener(new ActionListener() {
+		JButton zooming = new JButton("图像缩放");
+		zooming.setFont(new Font("黑体", Font.PLAIN, 12));
+		zooming.setBounds(786, 10, 93, 25);
+		zooming.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 			new Zooming();
 			}
 		});
-		contentPane.add(btnTest);
+		contentPane.add(zooming);
+		
+		//图像平移
+		JButton translation = new JButton("\u56FE\u50CF\u5E73\u79FB");
+		translation.setFont(new Font("黑体", Font.PLAIN, 12));
+		translation.setBounds(786, 37, 93, 25);
+		translation.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				new Translation();
+			}
+		});
+		contentPane.add(translation);
+		
+		//图像旋转
+		JButton rotating = new JButton("\u56FE\u50CF\u65CB\u8F6C");
+		rotating.setFont(new Font("黑体", Font.PLAIN, 12));
+		rotating.setBounds(882, 10, 93, 25);
+		contentPane.add(rotating);
 		
 
 	}
