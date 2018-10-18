@@ -487,6 +487,22 @@ public class UI extends JFrame {
 		});
 		contentPane.add(GST);
 		
+		JButton btnTest = new JButton("图像缩放");
+		btnTest.setBounds(785, 11, 93, 23);
+		btnTest.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+			temp=BitMap.suofang(image,0,800,800);
+			picture2.setIcon(new ImageIcon(temp));
+			int hist[]=new int[256];
+			hist=BitMap.getHist(temp);
+			int sum=temp.getWidth()*temp.getHeight();
+			BitMap.histLabel(sum, hist);
+			histogram2.setIcon( new ImageIcon(BitMap.drawHist(hist,sum)) );
+			}
+		});
+		contentPane.add(btnTest);
+		
 
 	}
 }
