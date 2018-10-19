@@ -337,12 +337,19 @@ public class BitMap {
 			int iw=image.getWidth();
 			int ih=image.getHeight();
 			int k,l;
+			
 			k=Math.round(x);//四舍五入
 			if(k>iw-1)
 				k=iw-1;
+			if(k<0)
+				k=0;
+			
 			l=Math.round(y);
 			if(l>ih-1)
 				l=ih-1;
+			if(l<0)
+				l=0;
+			
 			int red=cModel.getRed(image.getRGB(k, l));
 			return (new Color(red,red,red).getRGB());
 		}
@@ -355,8 +362,12 @@ public class BitMap {
 			int ih=image.getHeight();
 			if(x>iw-1)//映射回来的坐标有可能越界
 				x=iw-1;
+			if(x<0)
+				x=0;
 			if(y>ih-1)
 				y=ih-1;
+			if(y<0)
+				y=0;
 			/*
 			 * 0.0----1.0
 			 *  |  x.y |
@@ -441,6 +452,36 @@ public class BitMap {
 					}
 					else
 						result.setRGB(j,i, nearest(image, j-distance, i));
+				}
+		}
+		return result;
+	}
+	
+	//图像旋转
+	public static BufferedImage rotating(BufferedImage image,int way,String direction,int angle) {//way==0使用最近邻,way==1使用双线性
+		int iw=image.getWidth();
+		int ih=image.getHeight();
+		BufferedImage result=new BufferedImage(iw, ih, BufferedImage.TYPE_BYTE_GRAY);
+		if(direction.equals("顺时针")) {//顺时针旋转
+			for(int i=0;i<ih;i++)
+				for(int j=0;j<iw;j++) {
+					if(way==0)
+						;
+						//result.setRGB(j,i,nearest(image,x ,y ));
+					else if(way==1)
+						;
+						//result.setRGB(j, i, biLinear(image, x,y ));
+				}
+		}
+		else if(direction.equals("逆时针")) {//逆时针旋转
+			for(int i=0;i<ih;i++)
+				for(int j=0;j<iw;j++) {
+					if(way==0)
+						;
+						//result.setRGB(j,i,nearest(image,x ,y ));
+					else if(way==1)
+						;
+						//result.setRGB(j, i, biLinear(image, x,y ));
 				}
 		}
 		return result;
