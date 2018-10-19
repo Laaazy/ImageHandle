@@ -530,8 +530,12 @@ public class UI extends JFrame {
 		JButton rotating = new JButton("\u56FE\u50CF\u65CB\u8F6C");
 		rotating.setFont(new Font("黑体", Font.PLAIN, 12));
 		rotating.setBounds(882, 10, 93, 25);
+		rotating.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				new Rotating();
+			}
+		});
 		contentPane.add(rotating);
-		
-
 	}
 }
