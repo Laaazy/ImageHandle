@@ -58,7 +58,7 @@ public class Zooming {
 		contentPane.add(ih);
 		ih.setColumns(10);
 		
-		JButton nearest = new JButton("\u6700\u8FD1\u90BB\u63D2\u503C");
+		JButton nearest = new JButton("\u6700\u8FD1\u90BB\u63D2\u503C");//最近邻插值
 		nearest.setFont(new Font("黑体", Font.PLAIN, 12));
 		nearest.setBounds(208, 38, 100, 23);
 		nearest.addActionListener(new ActionListener() {
@@ -87,7 +87,7 @@ public class Zooming {
 		});
 		contentPane.add(nearest);
 		
-		JButton biLinear = new JButton("\u53CC\u7EBF\u6027\u63D2\u503C");
+		JButton biLinear = new JButton("\u53CC\u7EBF\u6027\u63D2\u503C");//双线性插值
 		biLinear.setFont(new Font("黑体", Font.PLAIN, 12));
 		biLinear.setBounds(310, 38, 100, 23);
 		biLinear.addActionListener(new ActionListener() {
