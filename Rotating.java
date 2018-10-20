@@ -14,11 +14,11 @@ import java.awt.event.ActionListener;
 import javax.swing.JTextField;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.SwingConstants;
 
 public class Rotating {
 
 	private JPanel contentPane;
-	private JTextField directionValue;
 	private JLabel angle;
 	private JTextField angleValue;
 	private JButton biLinearRotate;
@@ -34,23 +34,18 @@ public class Rotating {
 		childFrame.setTitle("图片旋转");
 		childFrame.setVisible(true);
 		
-		JLabel direction = new JLabel("\u65CB\u8F6C\u65B9\u5411\uFF08\u987A\u65F6\u9488\u6216\u9006\u65F6\u9488\uFF09");
-		direction.setFont(new Font("黑体", Font.PLAIN, 12));
-		direction.setBounds(45, 26, 156, 20);
-		contentPane.add(direction);
-		
-		directionValue = new JTextField();
-		directionValue.setBounds(45, 50, 66, 20);
-		contentPane.add(directionValue);
-		directionValue.setColumns(10);
+		JLabel Label = new JLabel("\u987A\u65F6\u9488\u65CB\u8F6C");
+		Label.setFont(new Font("黑体", Font.PLAIN, 12));
+		Label.setBounds(45, 26, 77, 20);
+		contentPane.add(Label);
 		
 		angle = new JLabel("\u65CB\u8F6C\u89D2\u5EA6\uFF080-360\uFF09");
 		angle.setFont(new Font("黑体", Font.PLAIN, 12));
-		angle.setBounds(45, 75, 102, 20);
+		angle.setBounds(45, 47, 102, 20);
 		contentPane.add(angle);
 		
 		angleValue = new JTextField();
-		angleValue.setBounds(45, 100, 66, 20);
+		angleValue.setBounds(45, 72, 130, 20);
 		contentPane.add(angleValue);
 		angleValue.setColumns(10);
 		
@@ -60,12 +55,11 @@ public class Rotating {
 		nearestRotate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				String direct=directionValue.getText();
 				int ang=Integer.parseInt(angleValue.getText());
-				if((!direct.equals("顺时针")&&!direct.equals("逆时针"))||ang<0||ang>360)
-					;
+				if(ang<0||ang>360)
+					angleValue.setText("角度范围应在[0°,360°]");
 				else {
-					UI.temp=BitMap.rotating(UI.image, 0, direct, ang);
+					UI.temp=BitMap.rotating(UI.image, 0,  ang);
 					UI.picture2.setIcon(new ImageIcon(UI.temp));
 					UI.picture2.setText(null);
 					int hist[]=new int[256];
@@ -85,12 +79,11 @@ public class Rotating {
 		biLinearRotate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				String direct=directionValue.getText();
 				int ang=Integer.parseInt(angleValue.getText());
-				if((!direct.equals("顺时针")&&!direct.equals("逆时针"))||ang<0||ang>360)
+				if(ang<0||ang>360)
 					;
 				else {
-					UI.temp=BitMap.rotating(UI.image, 1, direct, ang);
+					UI.temp=BitMap.rotating(UI.image, 1,  ang);
 					UI.picture2.setIcon(new ImageIcon(UI.temp));
 					UI.picture2.setText(null);
 					int hist[]=new int[256];
@@ -103,5 +96,8 @@ public class Rotating {
 			}
 		});
 		contentPane.add(biLinearRotate);
+		
+		
+		
 	}
 }
