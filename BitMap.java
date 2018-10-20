@@ -458,32 +458,34 @@ public class BitMap {
 	}
 	
 	//图像旋转
-	public static BufferedImage rotating(BufferedImage image,int way,String direction,int angle) {//way==0使用最近邻,way==1使用双线性
+	public static BufferedImage rotating(BufferedImage image,int way,int angle) {//way==0使用最近邻,way==1使用双线性
+		//image=(BufferedImage)image.getScaledInstance(320, 320, java.awt.Image.SCALE_DEFAULT);
+		//int iw=320;
+		//int ih=320;
 		int iw=image.getWidth();
 		int ih=image.getHeight();
 		BufferedImage result=new BufferedImage(iw, ih, BufferedImage.TYPE_BYTE_GRAY);
-		if(direction.equals("顺时针")) {//顺时针旋转
-			for(int i=0;i<ih;i++)
-				for(int j=0;j<iw;j++) {
-					if(way==0)
-						;
-						//result.setRGB(j,i,nearest(image,x ,y ));
-					else if(way==1)
-						;
-						//result.setRGB(j, i, biLinear(image, x,y ));
+		for(int i=0;i<ih;i++)
+			for(int j=0;j<iw;j++) {
+				//旋转前坐标
+				int x0=j-(iw-1)/2;
+				int y0=i-(ih-1)/2;
+				//计算向后映射的坐标x1,y1
+				int x1=(int)(Math.cos(angle*Math.PI/180)*x0+Math.sin(angle*Math.PI/180)*y0)+(iw-1)/2;
+				int y1=(int)(Math.cos(angle*Math.PI/180)*y0-Math.sin(angle*Math.PI/180)*x0)+(ih-1)/2;
+				if(way==0) {
+					if(x1<0||x1>iw-1||y1<0||y1>ih-1)
+						result.setRGB(j, i, new Color(0,0,0).getRGB());
+					else
+						result.setRGB(j,i,nearest(image,x1 ,y1 ));
 				}
-		}
-		else if(direction.equals("逆时针")) {//逆时针旋转
-			for(int i=0;i<ih;i++)
-				for(int j=0;j<iw;j++) {
-					if(way==0)
-						;
-						//result.setRGB(j,i,nearest(image,x ,y ));
-					else if(way==1)
-						;
-						//result.setRGB(j, i, biLinear(image, x,y ));
+				else if(way==1) {
+					if(x1<0||x1>iw-1||y1<0||y1>ih-1)
+						result.setRGB(j, i, new Color(0,0,0).getRGB());
+					else
+						result.setRGB(j,i,biLinear(image,x1 ,y1 ));	
 				}
-		}
+			}	
 		return result;
 	}
 }
