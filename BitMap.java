@@ -11,6 +11,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
+import com.sun.security.auth.NTDomainPrincipal;
+
 
 
 
@@ -486,6 +488,100 @@ public class BitMap {
 						result.setRGB(j,i,biLinear(image,x1 ,y1 ));	
 				}
 			}	
+		return result;
+	}
+	
+	//3x3均值平滑
+	public static int aveSmooth(int []around) {
+		int red=0;
+		for(int i=0;i<around.length;i++)
+			red+=around[i];
+		red/=8;
+		return red;
+	}
+	
+	//3x3中值平滑
+	public static int midSmooth(int []around) {
+		int red=0;
+		for(int i=0;i<8;i++)//降序排序
+			for(int j=i;j<8;j++) {
+				if(around[i]<around[j]) {//交换
+					int temp=around[i];
+					around[i]=around[j];
+					around[j]=temp;
+				}
+			}
+		//for(int i=0;i<8;i++)
+			//System.out.print(around[i]+" ");
+		red=(around[3]+around[4])/2;
+		return red;
+	}
+	
+	
+	//3x3 2近邻均值平滑
+	public static int _2nestAveSmooth(int[] around,int center) {
+		int red=0;
+		int first,second;//离中心点最近的两个点
+		first=around[0];
+		second=around[1];
+		if(Math.abs(first-center)>Math.abs(second-center)) {//维护first与second一开始的正确关系
+			int tmp=first;
+			first=second;
+			second=tmp;
+		}
+		for(int i=2;i<8;i++) {
+			if(Math.abs(around[i]-center)<Math.abs(second-center)) {
+				second=around[i];
+				if(Math.abs(first-center)>Math.abs(second-center)) {//维护first与second的正确关系
+					int tmp=first;
+					first=second;
+					second=tmp;
+				}
+			}
+		}
+		red=(first+second)/2;
+		return red;
+	}
+	
+	
+	//图像平滑,way==1采用均值平滑,way==2采用中值平滑,way==3采用最近邻平滑
+	public static BufferedImage Smooth(BufferedImage image,int way) {
+		int iw=image.getWidth();
+		int ih=image.getHeight();
+		ColorModel cModel=ColorModel.getRGBdefault();
+		BufferedImage result=new BufferedImage(iw,ih, BufferedImage.TYPE_BYTE_GRAY);
+		int[] around=new int[8];
+		
+		for(int j=0;j<iw;j++) //复制第一行
+			result.setRGB(j, 0,image.getRGB(j, 0));
+		for(int j=0;j<iw;j++) //复制最后一行
+			result.setRGB(j, ih-1,image.getRGB(j, ih-1));
+		for(int i=0;i<ih;i++) //复制第一列
+			result.setRGB(0, i,image.getRGB(0, i));
+		for(int i=0;i<ih;i++) //复制最后一列
+			result.setRGB(iw-1, i,image.getRGB(iw-1, i));
+		
+		for(int i=1;i<ih-1;i++)//不处理四条边
+			for(int j=1;j<iw-1;j++) {
+				//for(int k=0;k<9;k++)//初始化around
+					//around[k]=0;
+				around[0]=cModel.getRed(image.getRGB(j-1, i-1));
+				around[1]=cModel.getRed(image.getRGB(j, i-1));
+				around[2]=cModel.getRed(image.getRGB(j+1, i-1));
+				around[3]=cModel.getRed(image.getRGB(j-1, i));
+				around[4]=cModel.getRed(image.getRGB(j+1, i));
+				around[5]=cModel.getRed(image.getRGB(j-1, i+1));
+				around[6]=cModel.getRed(image.getRGB(j, i+1));
+				around[7]=cModel.getRed(image.getRGB(j+1, i+1));
+				int red=0;
+				if(way==1)
+					red=aveSmooth(around);
+				else if(way==2)
+					red=midSmooth(around);
+				else if(way==3)
+					red=_2nestAveSmooth(around, cModel.getRed(image.getRGB(j,i)));
+				result.setRGB(j, i, new Color(red,red,red).getRGB());
+			}
 		return result;
 	}
 }
