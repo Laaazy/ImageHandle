@@ -584,4 +584,85 @@ public class BitMap {
 			}
 		return result;
 	}
+	
+	//Roberts锐化
+	public static int Roberts(int[] around,int center) {
+		int red=0;
+		int delta_f=Math.abs(around[7]-center)+Math.abs(around[6]-around[4]);
+		if(delta_f<2)//选取T值为2，梯度大于等于2时采用梯度代替该点RGB值，否则用固定灰度0表示
+			red=0;
+		else if(delta_f>255)
+			delta_f=255;
+		else
+			red=delta_f;
+		return red;
+	}
+	
+	//Sobel锐化
+	public static int  Sobel(int []around) {
+		int red=0;
+		int delta_f_x=(around[0]+2*around[3]+around[5])-(around[2]+2*around[4]+around[7]);
+		int delta_f_y=(around[5]+2*around[6]+around[7])-(around[0]+2*around[1]+around[2]);
+		int delta_f=Math.abs(delta_f_x)+Math.abs(delta_f_y);
+		if(delta_f<100)//选取T值为100，梯度大于100时采用梯度代替该点RGB值，否则用固定灰度0表示
+			red=0;
+		else if(delta_f>255)
+			delta_f=255;
+		else
+			red=delta_f;
+		return red;
+	}
+	
+	//Laplacian锐化
+	public static int  Laplacian(int[] around,int center) {
+		int red=0;
+		int delta_f=Math.abs(4*center-around[1]-around[3]-around[4]-around[6]);
+		if(delta_f<10)//选取T值为10，梯度大于10时采用梯度代替该点RGB值，否则用固定灰度0表示
+			red=0;
+		else if(delta_f>255)
+			delta_f=255;
+		else
+			red=delta_f;
+		return red;
+	}
+	
+	//图像锐化,way==1采用Roberts锐化,way==2采用Sobel锐化,way==3采用Laplacian锐化
+		public static BufferedImage Sharpen(BufferedImage image,int way) {
+			int iw=image.getWidth();
+			int ih=image.getHeight();
+			ColorModel cModel=ColorModel.getRGBdefault();
+			BufferedImage result=new BufferedImage(iw,ih, BufferedImage.TYPE_BYTE_GRAY);
+			int[] around=new int[8];
+			
+			for(int j=0;j<iw;j++) //复制第一行
+				result.setRGB(j, 0,image.getRGB(j, 0));
+			for(int j=0;j<iw;j++) //复制最后一行
+				result.setRGB(j, ih-1,image.getRGB(j, ih-1));
+			for(int i=0;i<ih;i++) //复制第一列
+				result.setRGB(0, i,image.getRGB(0, i));
+			for(int i=0;i<ih;i++) //复制最后一列
+				result.setRGB(iw-1, i,image.getRGB(iw-1, i));
+			
+			for(int i=1;i<ih-1;i++)//不处理四条边
+				for(int j=1;j<iw-1;j++) {
+					around[0]=cModel.getRed(image.getRGB(j-1, i-1));
+					around[1]=cModel.getRed(image.getRGB(j, i-1));
+					around[2]=cModel.getRed(image.getRGB(j+1, i-1));
+					around[3]=cModel.getRed(image.getRGB(j-1, i));
+					around[4]=cModel.getRed(image.getRGB(j+1, i));
+					around[5]=cModel.getRed(image.getRGB(j-1, i+1));
+					around[6]=cModel.getRed(image.getRGB(j, i+1));
+					around[7]=cModel.getRed(image.getRGB(j+1, i+1));
+					int center=cModel.getRed(image.getRGB(j, i));
+					int red=0;
+					if(way==1)
+						red=Roberts(around, center);
+					else if(way==2)
+						red=Sobel(around);
+					else if(way==3)
+						red=Laplacian(around, center);
+					result.setRGB(j, i, new Color(red,red,red).getRGB());
+				}
+			return result;
+		}
 }
