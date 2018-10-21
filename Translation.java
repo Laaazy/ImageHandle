@@ -65,7 +65,7 @@ public class Translation{
 				String direct=direction.getText();
 				int dist=Integer.parseInt(distance.getText());
 				UI.temp=BitMap.translation(UI.image,direct,dist);
-				UI.picture2.setIcon(new ImageIcon(UI.temp));
+				UI.picture2.setIcon(new ImageIcon(UI.temp.getScaledInstance(UI.WIDTH, UI.HEIGHT, java.awt.Image.SCALE_DEFAULT)));
 				UI.picture2.setText(null);
 				int hist[]=new int[256];
 				hist=BitMap.getHist(UI.temp);
@@ -86,7 +86,7 @@ public class Translation{
 				String direct=direction.getText();
 				int dist=Integer.parseInt(distance.getText());
 				UI.temp=BitMap.translation(UI.image,direct,dist);
-				UI.picture2.setIcon(new ImageIcon(UI.temp));
+				UI.picture2.setIcon(new ImageIcon(UI.temp.getScaledInstance(UI.WIDTH, UI.HEIGHT, java.awt.Image.SCALE_DEFAULT)));
 				UI.picture2.setText(null);
 				int hist[]=new int[256];
 				hist=BitMap.getHist(UI.temp);
