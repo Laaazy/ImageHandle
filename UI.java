@@ -557,5 +557,15 @@ public class UI extends JFrame {
 		sharpen.setFont(new Font("黑体", Font.PLAIN, 12));
 		sharpen.setBounds(978, 10, 93, 25);
 		contentPane.add(sharpen);
+		
+		JButton free = new JButton("\u81EA\u5B9A\u4E49\u5377\u79EF");
+		free.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				new Convolution();
+			}
+		});
+		free.setFont(new Font("黑体", Font.PLAIN, 11));
+		free.setBounds(978, 38, 93, 25);
+		contentPane.add(free);
 	}
 }
