@@ -32,8 +32,8 @@ public class Translation{
 		childFrame.setBounds(400, 140, 280, 230);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		childFrame.setContentPane(contentPane);
 		contentPane.setLayout(null);
+		childFrame.setContentPane(contentPane);
 		childFrame.setVisible(true);
 		
 		direction = new JTextField();
