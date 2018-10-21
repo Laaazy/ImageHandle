@@ -665,4 +665,43 @@ public class BitMap {
 				}
 			return result;
 		}
+		
+		//自定义卷积
+		public static BufferedImage Convolution(BufferedImage image,float[] weight) {
+			int iw=image.getWidth();
+			int ih=image.getHeight();
+			ColorModel cModel=ColorModel.getRGBdefault();
+			BufferedImage result=new BufferedImage(iw,ih, BufferedImage.TYPE_BYTE_GRAY);
+			int[] around=new int[8];
+			
+			for(int j=0;j<iw;j++) //复制第一行
+				result.setRGB(j, 0,image.getRGB(j, 0));
+			for(int j=0;j<iw;j++) //复制最后一行
+				result.setRGB(j, ih-1,image.getRGB(j, ih-1));
+			for(int i=0;i<ih;i++) //复制第一列
+				result.setRGB(0, i,image.getRGB(0, i));
+			for(int i=0;i<ih;i++) //复制最后一列
+				result.setRGB(iw-1, i,image.getRGB(iw-1, i));
+			
+			for(int i=1;i<ih-1;i++)//不处理四条边
+				for(int j=1;j<iw-1;j++) {
+					around[0]=cModel.getRed(image.getRGB(j-1, i-1));
+					around[1]=cModel.getRed(image.getRGB(j, i-1));
+					around[2]=cModel.getRed(image.getRGB(j+1, i-1));
+					around[3]=cModel.getRed(image.getRGB(j-1, i));
+					around[4]=cModel.getRed(image.getRGB(j+1, i));
+					around[5]=cModel.getRed(image.getRGB(j-1, i+1));
+					around[6]=cModel.getRed(image.getRGB(j, i+1));
+					around[7]=cModel.getRed(image.getRGB(j+1, i+1));
+					int center=cModel.getRed(image.getRGB(j, i));
+					int red=(int)(weight[0]*around[0]+weight[1]*around[1]+weight[2]*around[2]+weight[3]*around[3]+weight[4]*center
+							+weight[5]*around[4]+weight[6]*around[5]+weight[7]*around[6]+weight[8]*around[7]);
+					if(red>255)
+						red=255;
+					else if(red<0)
+						red=0;
+					result.setRGB(j, i, new Color(red,red,red).getRGB());
+				}
+			return result;
+		}		
 }
