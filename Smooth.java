@@ -25,9 +25,9 @@ public class Smooth {
 		childFrame.setBounds(400, 140, 450, 150);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(null);
 		childFrame.setContentPane(contentPane);
 		childFrame.setVisible(true);
-		contentPane.setLayout(null);
 		
 		JButton average = new JButton("3x3\u5747\u503C\u5E73\u6ED1");
 		average.addActionListener(new ActionListener() {
