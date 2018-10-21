@@ -32,8 +32,8 @@ public class Zooming {
 		childFrame.setBounds(400, 140, 450, 250);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		childFrame.setContentPane(contentPane);
 		contentPane.setLayout(null);
+		childFrame.setContentPane(contentPane);
 		childFrame.setVisible(true);
 		
 		JLabel label_1 = new JLabel("\u76EE\u6807\u56FE\u50CF\u5BBD\u5EA6");
