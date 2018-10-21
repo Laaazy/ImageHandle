@@ -471,7 +471,7 @@ public class UI extends JFrame {
 		//非线性点处理2
 		JButton dot_change_4 = new JButton("\u975E\u7EBF\u6027\u70B9\u5904\u74062");
 		dot_change_4.setFont(new Font("黑体", Font.PLAIN, 9));
-		dot_change_4.setBounds(683, 37, 100, 25);
+		dot_change_4.setBounds(683, 38, 100, 25);
 		dot_change_4.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -517,7 +517,7 @@ public class UI extends JFrame {
 		//图像平移
 		JButton translation = new JButton("\u56FE\u50CF\u5E73\u79FB");
 		translation.setFont(new Font("黑体", Font.PLAIN, 12));
-		translation.setBounds(786, 37, 93, 25);
+		translation.setBounds(786, 38, 93, 25);
 		translation.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -537,5 +537,25 @@ public class UI extends JFrame {
 			}
 		});
 		contentPane.add(rotating);
+		
+		JButton smooth = new JButton("\u56FE\u50CF\u5E73\u6ED1");
+		smooth.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				new Smooth();
+			}
+		});
+		smooth.setFont(new Font("黑体", Font.PLAIN, 12));
+		smooth.setBounds(882, 38, 93, 25);
+		contentPane.add(smooth);
+		
+		JButton sharpen = new JButton("\u56FE\u50CF\u9510\u5316");
+		sharpen.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				new  Sharpen();
+			}
+		});
+		sharpen.setFont(new Font("黑体", Font.PLAIN, 12));
+		sharpen.setBounds(978, 10, 93, 25);
+		contentPane.add(sharpen);
 	}
 }
