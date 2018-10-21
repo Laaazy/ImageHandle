@@ -60,7 +60,7 @@ public class Rotating {
 					angleValue.setText("角度范围应在[0°,360°]");
 				else {
 					UI.temp=BitMap.rotating(UI.image, 0,  ang);
-					UI.picture2.setIcon(new ImageIcon(UI.temp));
+					UI.picture2.setIcon(new ImageIcon(UI.temp.getScaledInstance(UI.WIDTH, UI.HEIGHT, java.awt.Image.SCALE_DEFAULT)));
 					UI.picture2.setText(null);
 					int hist[]=new int[256];
 					hist=BitMap.getHist(UI.temp);
@@ -84,7 +84,7 @@ public class Rotating {
 					;
 				else {
 					UI.temp=BitMap.rotating(UI.image, 1,  ang);
-					UI.picture2.setIcon(new ImageIcon(UI.temp));
+					UI.picture2.setIcon(new ImageIcon(UI.temp.getScaledInstance(UI.WIDTH, UI.HEIGHT, java.awt.Image.SCALE_DEFAULT)));
 					UI.picture2.setText(null);
 					int hist[]=new int[256];
 					hist=BitMap.getHist(UI.temp);
