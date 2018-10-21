@@ -33,7 +33,7 @@ public class Smooth {
 		average.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				UI.temp=BitMap.Smooth(UI.image,1);
-				UI.picture2.setIcon(new ImageIcon(UI.temp));
+				UI.picture2.setIcon(new ImageIcon(UI.temp.getScaledInstance(UI.WIDTH, UI.HEIGHT, java.awt.Image.SCALE_DEFAULT)));
 				UI.picture2.setText(null);
 				int hist[]=new int[256];
 				hist=BitMap.getHist(UI.temp);
@@ -51,7 +51,7 @@ public class Smooth {
 		mid.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				UI.temp=BitMap.Smooth(UI.image,2);
-				UI.picture2.setIcon(new ImageIcon(UI.temp));
+				UI.picture2.setIcon(new ImageIcon(UI.temp.getScaledInstance(UI.WIDTH, UI.HEIGHT, java.awt.Image.SCALE_DEFAULT)));
 				UI.picture2.setText(null);
 				int hist[]=new int[256];
 				hist=BitMap.getHist(UI.temp);
@@ -69,7 +69,7 @@ public class Smooth {
 		knn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				UI.temp=BitMap.Smooth(UI.image,3);
-				UI.picture2.setIcon(new ImageIcon(UI.temp));
+				UI.picture2.setIcon(new ImageIcon(UI.temp.getScaledInstance(UI.WIDTH, UI.HEIGHT, java.awt.Image.SCALE_DEFAULT)));
 				UI.picture2.setText(null);
 				int hist[]=new int[256];
 				hist=BitMap.getHist(UI.temp);
