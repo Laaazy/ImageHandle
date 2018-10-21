@@ -25,8 +25,8 @@ public class Sharpen {
 		childFrame.setBounds(400, 140, 400, 150);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		childFrame.setContentPane(contentPane);
 		contentPane.setLayout(null);
+		childFrame.setContentPane(contentPane);
 		childFrame.setVisible(true);
 		
 		JButton Roberts = new JButton("Roberts\u9510\u5316");
