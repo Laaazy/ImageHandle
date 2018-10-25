@@ -21,8 +21,10 @@ public class BitMap {
 	//public static int hist[]=new int[256];
 	
 	//将24位彩色位图转换为灰度图
-	public static BufferedImage toGray(BufferedImage image) throws IOException {
-		File file=new File("D:\\imageHandle\\Gray.bmp");
+	public static void toGray(BufferedImage image,String filePath) throws IOException {
+		String[] stringArray=filePath.split("\\.");
+		String newName=stringArray[0]+"Gray.bmp";
+		File file=new File(newName);
 		int imgWidth=image.getWidth();
 		int imgHeight=image.getHeight();
 		BufferedImage gray=new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_BYTE_GRAY);
@@ -38,14 +40,13 @@ public class BitMap {
 				gray.setRGB(j, i, new Color(h,h,h).getRGB());
 			}
 		}
-		return gray;
-		/*String format="bmp";
+		//return gray;
 		try {
-			ImageIO.write(gray, format, file);//将image对象保存至文件
+			ImageIO.write(gray, "bmp", file);//将image对象保存至文件
 			System.out.println("保存至灰度图成功.");
 		}catch (IOException e) {
 			System.out.println("保存至灰度图失败.");
-		}*/
+		}
 	}
 	
 	//将8位灰度图分解为8幅位平面
