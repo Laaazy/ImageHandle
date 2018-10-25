@@ -242,8 +242,8 @@ public class UI extends JFrame {
 				try {
 					image=ImageIO.read(file);
 					temp=ImageIO.read(file);
-					temp=BitMap.toGray(image);
-					image=BitMap.toGray(image);//转化为灰度图,这里temp和image先后处理的顺讯是有影响的，即灰度图作用之后会发生改变
+					//temp=BitMap.toGray(image);
+					//image=BitMap.toGray(image);//转化为灰度图,这里temp和image先后处理的顺讯是有影响的，即灰度图作用之后会发生改变
 					System.out.println("转化为灰度图成功");
 					picture1.setIcon(new ImageIcon(image.getScaledInstance(WIDTH, HEIGHT, java.awt.Image.SCALE_DEFAULT)));
 					picture1.setText(null);
@@ -538,6 +538,7 @@ public class UI extends JFrame {
 		});
 		contentPane.add(rotating);
 		
+		//图像平滑
 		JButton smooth = new JButton("\u56FE\u50CF\u5E73\u6ED1");
 		smooth.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -548,6 +549,7 @@ public class UI extends JFrame {
 		smooth.setBounds(882, 38, 93, 25);
 		contentPane.add(smooth);
 		
+		//图像锐化
 		JButton sharpen = new JButton("\u56FE\u50CF\u9510\u5316");
 		sharpen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -558,6 +560,8 @@ public class UI extends JFrame {
 		sharpen.setBounds(978, 10, 93, 25);
 		contentPane.add(sharpen);
 		
+		
+		//自由卷积
 		JButton free = new JButton("\u81EA\u5B9A\u4E49\u5377\u79EF");
 		free.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -567,5 +571,28 @@ public class UI extends JFrame {
 		free.setFont(new Font("黑体", Font.PLAIN, 11));
 		free.setBounds(978, 38, 93, 25);
 		contentPane.add(free);
+		
+		JButton transToGray = new JButton("\u5F69\u8272\u56FE\u8F6C\u7070\u5EA6\u56FE");
+		transToGray.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser chooser=new JFileChooser();
+				chooser.setAcceptAllFileFilterUsed(false);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("JPEG","jpg", "gif","bmp");
+				chooser.setFileFilter(filter);
+				chooser.showOpenDialog(null);
+				File file1=chooser.getSelectedFile();
+				String filePath=file1.getPath();
+				BufferedImage img;
+				try {
+					img = ImageIO.read(file1);
+					BitMap.toGray(img, filePath);
+				} catch (IOException e) {
+					System.err.println("选择彩色图像失败");;
+				}
+			}
+		});
+		transToGray.setFont(new Font("黑体", Font.PLAIN, 12));
+		transToGray.setBounds(1074, 10, 127, 25);
+		contentPane.add(transToGray);
 	}
 }
