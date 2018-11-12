@@ -572,6 +572,7 @@ public class UI extends JFrame {
 		free.setBounds(978, 38, 93, 25);
 		contentPane.add(free);
 		
+		//彩色图转化为灰度图
 		JButton transToGray = new JButton("\u5F69\u8272\u56FE\u8F6C\u7070\u5EA6\u56FE");
 		transToGray.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -594,5 +595,52 @@ public class UI extends JFrame {
 		transToGray.setFont(new Font("黑体", Font.PLAIN, 12));
 		transToGray.setBounds(1074, 10, 127, 25);
 		contentPane.add(transToGray);
+		
+		//边缘检测
+		JButton edge_detect = new JButton("\u8FB9\u7F18\u68C0\u6D4B");
+		edge_detect.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				new Edge_detc();
+			}
+		});
+		edge_detect.setFont(new Font("黑体", Font.PLAIN, 12));
+		edge_detect.setBounds(1074, 38, 127, 25);
+		contentPane.add(edge_detect);
+		
+		//边缘跟踪
+		JButton btnNewButton = new JButton("\u8FB9\u7F18\u8DDF\u8E2A");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				temp=BitMap.Edge_tracing(image);
+				picture2.setIcon(new ImageIcon(temp.getScaledInstance(WIDTH, HEIGHT, java.awt.Image.SCALE_DEFAULT)));
+				picture2.setText(null);
+				int hist[]=new int[256];
+				hist=BitMap.getHist(temp);
+				int sum=temp.getWidth()*temp.getHeight();
+				BitMap.histLabel(sum, hist);
+				histogram2.setIcon( new ImageIcon(BitMap.drawHist(hist,sum)));	
+			}
+		});
+		btnNewButton.setFont(new Font("黑体", Font.PLAIN, 12));
+		btnNewButton.setBounds(580, 66, 100, 25);
+		contentPane.add(btnNewButton);
+		
+		//霍夫变换检测直线
+		JButton Hough = new JButton("\u970D\u592B\u53D8\u6362");
+		Hough.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				temp=BitMap.Hough(image);
+				picture2.setIcon(new ImageIcon(temp.getScaledInstance(WIDTH, HEIGHT, java.awt.Image.SCALE_DEFAULT)));
+				picture2.setText(null);
+				int hist[]=new int[256];
+				hist=BitMap.getHist(temp);
+				int sum=temp.getWidth()*temp.getHeight();
+				BitMap.histLabel(sum, hist);
+				histogram2.setIcon( new ImageIcon(BitMap.drawHist(hist,sum)));
+			}
+		});
+		Hough.setFont(new Font("黑体", Font.PLAIN, 12));
+		Hough.setBounds(683, 66, 100, 25);
+		contentPane.add(Hough);
 	}
 }
