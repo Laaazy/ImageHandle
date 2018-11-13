@@ -642,5 +642,97 @@ public class UI extends JFrame {
 		Hough.setFont(new Font("黑体", Font.PLAIN, 12));
 		Hough.setBounds(683, 66, 100, 25);
 		contentPane.add(Hough);
+		
+		//哈夫曼编码压缩
+		JButton Huff_compress = new JButton("\u54C8\u592B\u66FC\u538B\u7F29");
+		Huff_compress.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0)  {
+				JFileChooser chooser=new JFileChooser();
+				chooser.setAcceptAllFileFilterUsed(false);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("JPEG","jpg", "gif","bmp");
+				chooser.setFileFilter(filter);
+				chooser.showOpenDialog(null);
+				file=chooser.getSelectedFile();
+				
+					HuffmCompress huffmCompress=new HuffmCompress();
+					String path=file.getPath();
+					String[] strings=path.split("\\.");
+					String destPath=strings[0]+"Huffm.zip";
+					huffmCompress.countTimes(path);
+					HuffmNode root=huffmCompress.createHuffmTree();
+					huffmCompress.getHuffmCodes(root, "");
+					huffmCompress.compress(path, destPath);
+			}
+		});
+		Huff_compress.setFont(new Font("黑体", Font.PLAIN, 11));
+		Huff_compress.setBounds(786, 66, 93, 25);
+		contentPane.add(Huff_compress);
+		
+		//哈夫曼编码解压缩
+		JButton HuffmDecompress = new JButton("\u54C8\u592B\u66FC\u89E3\u538B");
+		HuffmDecompress.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser chooser=new JFileChooser();
+				chooser.setAcceptAllFileFilterUsed(false);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("","zip");
+				chooser.setFileFilter(filter);
+				chooser.showOpenDialog(null);
+				file=chooser.getSelectedFile();
+				
+				HuffmDecompress huffmDecompress=new HuffmDecompress();
+				String srcPath=file.getPath();
+				String[] strings=srcPath.split("\\.");
+				String destPath=strings[0]+"De.bmp";
+				huffmDecompress.decompress(srcPath, destPath);	
+			}
+		});
+		HuffmDecompress.setFont(new Font("黑体", Font.PLAIN, 11));
+		HuffmDecompress.setBounds(882, 66, 93, 25);
+		contentPane.add(HuffmDecompress);
+		
+		//游程编码压缩
+		JButton RLE = new JButton("\u6E38\u7A0B\u538B\u7F29");
+		RLE.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser chooser=new JFileChooser();
+				chooser.setAcceptAllFileFilterUsed(false);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("JPEG","jpg", "gif","bmp");
+				chooser.setFileFilter(filter);
+				chooser.showOpenDialog(null);
+				file=chooser.getSelectedFile();
+				
+				RLEEncode rleEncode=new RLEEncode();
+				String srcPath=file.getPath();
+				String[] strings=srcPath.split("\\.");
+				String destPath=strings[0]+"RLE.zip";
+				rleEncode.RLECompress(srcPath, destPath);	
+			}
+		});
+		RLE.setFont(new Font("黑体", Font.PLAIN, 12));
+		RLE.setBounds(978, 66, 93, 25);
+		contentPane.add(RLE);
+		
+		
+		//游程编码解压缩
+		JButton RLDE = new JButton("\u6E38\u7A0B\u89E3\u538B");
+		RLDE.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser chooser=new JFileChooser();
+				chooser.setAcceptAllFileFilterUsed(false);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("","zip");
+				chooser.setFileFilter(filter);
+				chooser.showOpenDialog(null);
+				file=chooser.getSelectedFile();
+				
+				RLEEncode rleEncode=new RLEEncode();
+				String srcPath=file.getPath();
+				String[] strings=srcPath.split("\\.");
+				String destPath=strings[0]+"De.bmp";
+				rleEncode.RLEDecompress(srcPath, destPath);
+			}
+		});
+		RLDE.setFont(new Font("黑体", Font.PLAIN, 12));
+		RLDE.setBounds(1074, 66, 127, 25);
+		contentPane.add(RLDE);
 	}
 }
