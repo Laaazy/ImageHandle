@@ -759,6 +759,7 @@ public class BitMap {
 		public static int[] getAround(BufferedImage image,int j,int i) {
 			ColorModel cModel=ColorModel.getRGBdefault();
 			int[] around=new int[8];
+			System.err.println("j:"+j+" i:"+i);
 			around[0]=cModel.getRed(image.getRGB(j-1, i-1));
 			around[1]=cModel.getRed(image.getRGB(j, i-1));
 			around[2]=cModel.getRed(image.getRGB(j+1, i-1));
@@ -777,13 +778,14 @@ public class BitMap {
 		
 		//采用简单方法进行边缘跟踪
 		public static BufferedImage Edge_tracing(BufferedImage image) {
-			int count=0;
+			//每个小格子的边长
+			int d=10;
 			int iw=image.getWidth();
 			int ih=image.getHeight();
 			BufferedImage result=new BufferedImage(iw, ih,BufferedImage.TYPE_BYTE_GRAY);
 			ColorModel cModel=ColorModel.getRGBdefault();
 			//int [][]grad=new int[ih][iw];//记录图像的梯度图
-			int [][]flag=new int[ih][iw];//标记哪些点应该被认为是边缘点
+			int [][]flag=new int[d][d];//标记哪些点应该被认为是边缘点
 			int around[]=new int[8];
 			int max=0;//max记录图像最大梯度
 			int finalRed=0;//最终所有边缘点的Red值赋值数
@@ -791,298 +793,384 @@ public class BitMap {
 			int new_x=0,new_y=0;//新的参考点坐标
 			int start_x=0,start_y=0;
 			
-			for(int i=0;i<ih;i++)
+			/*for(int i=0;i<ih;i++) {
 				for(int j=0;j<iw;j++) {
-					//grad[i][j]=0;
-					flag[i][j]=0;
-				}
-			
-	
-			//寻找梯度最大的点
-			for(int i=0;i<ih;i++)
-			{
-				for(int j=0;j<iw;j++) {
-					if(cModel.getRed(image.getRGB(j, i))==0)
-						System.out.print(cModel.getRed(image.getRGB(j, i))+"   ");
-					else
-						System.out.print(cModel.getRed(image.getRGB(j, i))+" ");
-					if(cModel.getRed(image.getRGB(j,i))>max)
-					{
-						max=cModel.getRed(image.getRGB(j,i));
-						old_x=j;
-						old_y=i;
-					}
+					System.out.print(cModel.getRed(image.getRGB(j,i))+" ");
 				}
 				System.out.println("");
-			}
-			start_x=old_x;
-			start_y=old_y;
-			flag[old_y][old_x]=1;
-			finalRed=max;
+			}*/
 			
-			around=getAround(image, old_x, old_y);
-			max=around[0];
-			int max_i=0;//最大值出现处的下标
-			for(int i=1;i<8;i++) {
-				if(around[i]>max) {
-					max=around[i];
-					max_i=i;
-				}	
-			}
-			switch (max_i) {
-			case 0:{
-				new_x=old_x-1;
-				new_y=old_y-1;
-				break;
-			}
-			case 1:{
-				new_x=old_x;
-				new_y=old_y-1;
-				break;
-			}
-			case 2:{
-				new_x=old_x+1;
-				new_y=old_y-1;
-				break;
-			}
-			case 3:{
-				new_x=old_x-1;
-				new_y=old_y;
-				break;
-			}
-			case 4:{
-				new_x=old_x+1;
-				new_y=old_y;
-				break;
-			}
-			case 5:{
-				new_x=old_x-1;
-				new_y=old_y+1;
-				break;
-			}
-			case 6:{
-				new_x=old_x;
-				new_y=old_y+1;
-				break;
-			}
-			case 7:{
-				new_x=old_x+1;
-				new_y=old_y+1;
-				break;
-			}	
-			default:
-				break;
-			};
-			//if(new_x>=iw)
-				//new_x=iw-1;
-			flag[new_y][new_x]=1;//记录下第二个参照点
 			
-			//暂设边缘跟踪结束条件为回到第一个参照点
-			while(count<100000) {
-				count++;
-				old_x=new_x;
-				old_y=new_y;
-				switch (max_i) {//判断上一个新参考点出现的位置
-				case 0:{//新参考点在原参考点左上角
-					int red_1=cModel.getRed(image.getRGB(old_x-1, old_y));
-					int red_2=0;
-					try {
-						red_2=cModel.getRed(image.getRGB(old_x-1, old_y-1));
-					} catch (Exception e) {
-						System.err.println((old_x-1)+" "+(old_y-1));
+			
+			for(int i=0;i<ih;i+=d) {
+				for(int j=0;j<iw;j+=d) {
+					
+					//每到一个新格子，初始化标记矩阵
+					for(int k=0;k<d;k++)
+						for(int l=0;l<d;l++)
+							flag[k][l]=0;
+					
+					//寻找小格子中的最亮点
+					max=0;
+					for(int k=0;k<d && i+k<ih;k++) {
+						for(int l=0;l<d && j+l<iw;l++) {
+							if(cModel.getRed(image.getRGB(j+l,i+k))>=max)
+							{
+								max=cModel.getRed(image.getRGB(j+l,i+k));
+								old_x=j+l;
+								//System.err.println("j=="+j+" old_x=="+old_x);
+								old_y=i+k;
+							}
+						}
 					}
-					int red_3=cModel.getRed(image.getRGB(old_x, old_y-1));
-					max=Max_in_three(red_1, red_2, red_3);
-					if(max==red_1) {
-						new_x=old_x-1;
-						new_y=old_y;
-						max_i=3;
+					start_x=old_x;
+					start_y=old_y;
+					//System.err.println("old_x:"+old_x+"  j:"+j+"  old_y:"+old_y+"  i:"+i);
+					if(cModel.getRed(image.getRGB(old_x, old_y))==0)
+						continue;
+					flag[old_y-i][old_x-j]=1;
+					//如果最亮点在20x20小格子边缘或者在图像边缘
+					if(start_x==j||start_y==i||start_x==j+d-1||start_y==i+d-1)
+						continue;
+					//如果最亮的点在图像边缘
+					if(start_x<1||start_x>iw-2||start_y<1||start_y>ih-2)
+						continue;
+					finalRed=max;
+					//寻找周围8邻域中的最亮点
+					around=getAround(image, old_x, old_y);
+					max=around[0];
+					int max_i=0;//最大值出现处的下标
+					for(int m=1;m<8;m++) {
+						if(around[m]>max) {
+							max=around[m];
+							max_i=m;
+						}	
 					}
-					else if(max==red_2) {
+					switch (max_i) {
+					case 0:{
 						new_x=old_x-1;
 						new_y=old_y-1;
-						max_i=0;
+						//如果第二个点在边缘
+						if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+							continue;
+						//break;
 					}
-					else if(max==red_3){
+					case 1:{
 						new_x=old_x;
 						new_y=old_y-1;
-						max_i=1;
+						if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+							continue;
+						//break;
 					}
-					flag[new_y][new_x]=1;
-					break;
-				}
-				case 1:{
-					int red_1=cModel.getRed(image.getRGB(old_x-1, old_y-1));
-					int red_2=cModel.getRed(image.getRGB(old_x, old_y-1));
-					int red_3=cModel.getRed(image.getRGB(old_x+1, old_y-1));
-					max=Max_in_three(red_1, red_2, red_3);
-					if(max==red_1) {
-						new_x=old_x-1;
-						new_y=old_y-1;
-						max_i=0;
-					}
-					else if(max==red_2) {
-						new_x=old_x;
-						new_y=old_y-1;
-						max_i=1;
-					}
-					else if(max==red_3){
+					case 2:{
 						new_x=old_x+1;
 						new_y=old_y-1;
-						max_i=2;
+						if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+							continue;
+						//break;
 					}
-					flag[new_y][new_x]=1;
-					break;
-				}
-				case 2:{
-					int red_1=cModel.getRed(image.getRGB(old_x, old_y-1));
-					int red_2=cModel.getRed(image.getRGB(old_x+1, old_y-1));
-					int red_3=cModel.getRed(image.getRGB(old_x+1, old_y));
-					max=Max_in_three(red_1, red_2, red_3);
-					if(max==red_1) {
-						new_x=old_x;
-						new_y=old_y-1;
-						max_i=1;
-					}
-					else if(max==red_2) {
-						new_x=old_x+1;
-						new_y=old_y-1;
-						max_i=2;
-					}
-					else if(max==red_3){
-						new_x=old_x+1;
-						new_y=old_y;
-						max_i=4;
-					}
-					flag[new_y][new_x]=1;
-					break;
-				}
-				case 3:{
-					int red_1=cModel.getRed(image.getRGB(old_x-1, old_y-1));
-					int red_2=cModel.getRed(image.getRGB(old_x-1, old_y));
-					int red_3=cModel.getRed(image.getRGB(old_x-1, old_y+1));
-					max=Max_in_three(red_1, red_2, red_3);
-					if(max==red_1) {
-						new_x=old_x-1;
-						new_y=old_y-1;
-						max_i=0;
-					}
-					else if(max==red_2) {
+					case 3:{
 						new_x=old_x-1;
 						new_y=old_y;
-						max_i=3;
+						if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+							continue;
+						//break;
 					}
-					else if(max==red_3){
-						new_x=old_x-1;
-						new_y=old_y+1;
-						max_i=5;
-					}
-					flag[new_y][new_x]=1;
-					break;
-				}
-				case 4:{
-					int red_1=cModel.getRed(image.getRGB(old_x+1, old_y-1));
-					int red_2=cModel.getRed(image.getRGB(old_x+1, old_y));
-					int red_3=cModel.getRed(image.getRGB(old_x+1, old_y+1));
-					max=Max_in_three(red_1, red_2, red_3);
-					if(max==red_1) {
-						new_x=old_x+1;
-						new_y=old_y-1;
-						max_i=2;
-					}
-					else if(max==red_2) {
+					case 4:{
 						new_x=old_x+1;
 						new_y=old_y;
-						max_i=4;
+						if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+							continue;
+						//break;
 					}
-					else if(max==red_3){
-						new_x=old_x+1;
-						new_y=old_y+1;
-						max_i=7;
-					}
-					flag[new_y][new_x]=1;
-					break;
-				}
-				case 5:{
-					int red_1=cModel.getRed(image.getRGB(old_x-1, old_y));
-					int red_2=cModel.getRed(image.getRGB(old_x-1, old_y+1));
-					int red_3=cModel.getRed(image.getRGB(old_x, old_y+1));
-					max=Max_in_three(red_1, red_2, red_3);
-					if(max==red_1) {
-						new_x=old_x-1;
-						new_y=old_y;
-						max_i=3;
-					}
-					else if(max==red_2) {
+					case 5:{
 						new_x=old_x-1;
 						new_y=old_y+1;
-						max_i=5;
+						if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+							continue;
+						//break;
 					}
-					else if(max==red_3){
+					case 6:{
 						new_x=old_x;
 						new_y=old_y+1;
-						max_i=6;
+						if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+							continue;
+						//break;
 					}
-					flag[new_y][new_x]=1;
-					break;
+					case 7:{
+						new_x=old_x+1;
+						new_y=old_y+1;
+						if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+							continue;
+						//break;
+					}	
+					default:
+						break;
+					};
+					flag[new_y-i][new_x-j]=1;//记录下第二个参照点
+					
+					//暂设边缘跟踪结束条件为回到第一个参照点
+					outer:while(new_x!=start_x||new_y!=start_y) {
+						old_x=new_x;
+						old_y=new_y;
+						//System.err.println("old_x:  "+old_x);
+						switch (max_i) {//判断上一个新参考点出现的位置
+						case 0:{//新参考点在原参考点左上角
+							int red_1=cModel.getRed(image.getRGB(old_x-1, old_y));
+							int red_2=cModel.getRed(image.getRGB(old_x-1, old_y-1));
+							int red_3=cModel.getRed(image.getRGB(old_x, old_y-1));
+							max=Max_in_three(red_1, red_2, red_3);
+							if(max==red_1) {
+								new_x=old_x-1;
+								new_y=old_y;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=3;
+							}
+							else if(max==red_2) {
+								new_x=old_x-1;
+								new_y=old_y-1;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=0;
+							}
+							else if(max==red_3){
+								new_x=old_x;
+								new_y=old_y-1;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=1;
+							}
+							flag[new_y-i][new_x-j]=1;
+							break;
+						}
+						case 1:{
+							int red_1=cModel.getRed(image.getRGB(old_x-1, old_y-1));
+							int red_2=cModel.getRed(image.getRGB(old_x, old_y-1));
+							int red_3=cModel.getRed(image.getRGB(old_x+1, old_y-1));
+							max=Max_in_three(red_1, red_2, red_3);
+							if(max==red_1) {
+								new_x=old_x-1;
+								new_y=old_y-1;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=0;
+							}
+							else if(max==red_2) {
+								new_x=old_x;
+								new_y=old_y-1;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=1;
+							}
+							else if(max==red_3){
+								new_x=old_x+1;
+								new_y=old_y-1;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=2;
+							}
+							flag[new_y-i][new_x-j]=1;
+							break;
+						}
+						case 2:{
+							int red_1=cModel.getRed(image.getRGB(old_x, old_y-1));
+							int red_2=cModel.getRed(image.getRGB(old_x+1, old_y-1));
+							int red_3=cModel.getRed(image.getRGB(old_x+1, old_y));
+							max=Max_in_three(red_1, red_2, red_3);
+							if(max==red_1) {
+								new_x=old_x;
+								new_y=old_y-1;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=1;
+							}
+							else if(max==red_2) {
+								new_x=old_x+1;
+								new_y=old_y-1;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=2;
+							}
+							else if(max==red_3){
+								new_x=old_x+1;
+								new_y=old_y;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=4;
+							}
+							flag[new_y-i][new_x-j]=1;
+							break;
+						}
+						case 3:{
+							int red_1=cModel.getRed(image.getRGB(old_x-1, old_y-1));
+							int red_2=cModel.getRed(image.getRGB(old_x-1, old_y));
+							int red_3=cModel.getRed(image.getRGB(old_x-1, old_y+1));
+							max=Max_in_three(red_1, red_2, red_3);
+							if(max==red_1) {
+								new_x=old_x-1;
+								new_y=old_y-1;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=0;
+							}
+							else if(max==red_2) {
+								new_x=old_x-1;
+								new_y=old_y;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=3;
+							}
+							else if(max==red_3){
+								new_x=old_x-1;
+								new_y=old_y+1;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=5;
+							}
+							flag[new_y-i][new_x-j]=1;
+							break;
+						}
+						case 4:{
+							int red_1=cModel.getRed(image.getRGB(old_x+1, old_y-1));
+							int red_2=cModel.getRed(image.getRGB(old_x+1, old_y));
+							int red_3=cModel.getRed(image.getRGB(old_x+1, old_y+1));
+							max=Max_in_three(red_1, red_2, red_3);
+							if(max==red_1) {
+								new_x=old_x+1;
+								new_y=old_y-1;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=2;
+							}
+							else if(max==red_2) {
+								new_x=old_x+1;
+								new_y=old_y;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=4;
+							}
+							else if(max==red_3){
+								new_x=old_x+1;
+								new_y=old_y+1;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=7;
+							}
+							flag[new_y-i][new_x-j]=1;
+							break;
+						}
+						case 5:{
+							int red_1=cModel.getRed(image.getRGB(old_x-1, old_y));
+							int red_2=cModel.getRed(image.getRGB(old_x-1, old_y+1));
+							int red_3=cModel.getRed(image.getRGB(old_x, old_y+1));
+							max=Max_in_three(red_1, red_2, red_3);
+							if(max==red_1) {
+								new_x=old_x-1;
+								new_y=old_y;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=3;
+							}
+							else if(max==red_2) {
+								new_x=old_x-1;
+								new_y=old_y+1;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=5;
+							}
+							else if(max==red_3){
+								new_x=old_x;
+								new_y=old_y+1;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=6;
+							}
+							flag[new_y-i][new_x-j]=1;
+							break;
+						}
+						case 6:{
+							int red_1=cModel.getRed(image.getRGB(old_x-1, old_y+1));
+							int red_2=cModel.getRed(image.getRGB(old_x, old_y+1));
+							int red_3=cModel.getRed(image.getRGB(old_x+1, old_y+1));
+							max=Max_in_three(red_1, red_2, red_3);
+							if(max==red_1) {
+								new_x=old_x-1;
+								new_y=old_y+1;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=5;
+							}
+							else if(max==red_2) {
+								new_x=old_x;
+								new_y=old_y+1;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=6;
+							}
+							else if(max==red_3){
+								new_x=old_x+1;
+								new_y=old_y+1;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=7;
+							}
+							flag[new_y-i][new_x-j]=1;
+							break;
+						}
+						case 7:{
+							int red_1=cModel.getRed(image.getRGB(old_x, old_y+1));
+							int red_2=cModel.getRed(image.getRGB(old_x+1, old_y+1));
+							int red_3=cModel.getRed(image.getRGB(old_x+1, old_y));
+							max=Max_in_three(red_1, red_2, red_3);
+							if(max==red_1) {
+								new_x=old_x;
+								new_y=old_y+1;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=6;
+							}
+							else if(max==red_2) {
+								new_x=old_x+1;
+								new_y=old_y+1;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=7;
+							}
+							else if(max==red_3){
+								new_x=old_x+1;
+								new_y=old_y;
+								if(new_x==j||new_y==i||new_x==j+d-1||new_y==i+d-1)
+									break outer;
+								max_i=4;
+							}
+							//System.err.println("new_y:"+new_y+"  i:"+i+"  new_x:"+new_x+"  j:"+j);
+							//System.err.println("old_x:"+old_x);
+							flag[new_y-i][new_x-j]=1;
+							break;
+						}	
+						default:
+							break;
+						};
+					}
+					//图像边缘连续化
+					for(int k=0;k<d;k++) {
+						for(int l=0;l<d;l++) {
+							if(flag[k][l]==1)
+								result.setRGB(j+l,i+k, new Color(255,255,255).getRed());
+						}
+					}
+					
 				}
-				case 6:{
-					int red_1=cModel.getRed(image.getRGB(old_x-1, old_y+1));
-					int red_2=cModel.getRed(image.getRGB(old_x, old_y+1));
-					int red_3=cModel.getRed(image.getRGB(old_x+1, old_y+1));
-					max=Max_in_three(red_1, red_2, red_3);
-					if(max==red_1) {
-						new_x=old_x-1;
-						new_y=old_y+1;
-						max_i=5;
-					}
-					else if(max==red_2) {
-						new_x=old_x;
-						new_y=old_y+1;
-						max_i=6;
-					}
-					else if(max==red_3){
-						new_x=old_x+1;
-						new_y=old_y+1;
-						max_i=7;
-					}
-					flag[new_y][new_x]=1;
-					break;
-				}
-				case 7:{
-					int red_1=cModel.getRed(image.getRGB(old_x, old_y+1));
-					int red_2=cModel.getRed(image.getRGB(old_x+1, old_y+1));
-					int red_3=cModel.getRed(image.getRGB(old_x+1, old_y));
-					max=Max_in_three(red_1, red_2, red_3);
-					if(max==red_1) {
-						new_x=old_x;
-						new_y=old_y+1;
-						max_i=6;
-					}
-					else if(max==red_2) {
-						new_x=old_x+1;
-						new_y=old_y+1;
-						max_i=7;
-					}
-					else if(max==red_3){
-						new_x=old_x+1;
-						new_y=old_y;
-						max_i=4;
-					}
-					flag[new_y][new_x]=1;
-					break;
-				}	
-				default:
-					break;
-				};
 			}
-			for(int i=0;i<ih;i++)
-				for(int j=0;j<iw;j++) {
-					if(flag[i][j]==1)
-						result.setRGB(j, i, new Color(finalRed,finalRed,finalRed).getRed());
-					else
-						result.setRGB(j, i, new Color(0,0,0).getRed());
-				}
+			//将原来的图像叠加上
+			/*for(int i=0;i<ih;i++)
+				for(int j=0;j<iw;j++)
+					if(cModel.getRed(image.getRGB(j, i))>70)
+						result.setRGB(j, i, new Color(255,255,255).getRGB());*/
+			/*for(int i=0;i<ih;i++)
+				for(int j=0;j<iw;j++)
+					result.setRGB(j, i, image.getRGB(j, i));*/
 			return result;
 		}
 		
@@ -1200,11 +1288,11 @@ public class BitMap {
 					}
 				}
 			}
-			System.err.println(max1+" "+p_max1+" "+q_max1);
-			System.err.println(max2+" "+p_max2+" "+q_max2);
-			System.err.println(max3+" "+p_max3+" "+q_max3);
-			System.err.println(max4+" "+p_max4+" "+q_max4);
-			System.err.println(max5+" "+p_max5+" "+q_max5);
+			//System.err.println(max1+" "+p_max1+" "+q_max1);
+			//System.err.println(max2+" "+p_max2+" "+q_max2);
+			//System.err.println(max3+" "+p_max3+" "+q_max3);
+			//System.err.println(max4+" "+p_max4+" "+q_max4);
+			//System.err.println(max5+" "+p_max5+" "+q_max5);
 			
 			for(int i=ih-1;i>=0;i--) {
 				for(int j=0;j<iw;j++) {
