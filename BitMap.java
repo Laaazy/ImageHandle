@@ -14,29 +14,7 @@ import javax.swing.ImageIcon;
 import com.sun.security.auth.NTDomainPrincipal;
 
 
-
-
 public class BitMap {
-	
-	/*
-	//某点处的梯度
-	class Grad{
-		protected int gradStength;//梯度强度
-		protected int direction;//梯度角度
-		
-		protected Grad () {
-			this.gradStength=0;
-			this.direction=0;
-		}
-		
-		protected Grad(int gradStrength,int direction) {
-			this.gradStength=gradStrength;
-			this.direction=direction;
-		}
-	}
-	protected static Grad grad=new Grad();//创建梯度类实例
-	*/
-	
 	//public static int hist[]=new int[256];
 	
 	//将24位彩色位图转换为灰度图
